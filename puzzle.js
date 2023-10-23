@@ -80,3 +80,76 @@ function randomNumber(){
         document.getElementById(numbers[i]).firstChild.data = value
     }
 }
+
+function isGameSolved() {
+    for (let i = 0; i < numbers.length - 1; i++) {
+        const currentTile = document.getElementById(numbers[i]);
+        const nextTile = document.getElementById(numbers[i + 1]);
+
+        // Verifique se o espaço em branco está antes da sequência de 1 a 8
+        if (currentTile.firstChild.data === " " || nextTile.firstChild.data === " ") {
+            return false;
+        }
+
+        const currentNumber = parseInt(currentTile.firstChild.data);
+        const nextNumber = parseInt(nextTile.firstChild.data);
+
+        // Verifique se a sequência está fora de ordem
+        if (currentNumber !== nextNumber - 1) {
+            return false;
+        }
+    }
+
+    return true; // Todas as condições foram atendidas, o jogo está resolvido
+}
+
+//
+//
+//
+function randomizeGame() {
+    var moveCounter = 0;
+    var isRandomizing = true; // Variável para indicar que o jogo está sendo embaralhado
+
+    // Atualiza o indicador de carregamento
+    function updateLoadingIndicator() {
+        var loadingIndicator = document.getElementById("loadingIndicator");
+        if (isRandomizing) {
+            loadingIndicator.style.display = "block";
+        } else {
+            loadingIndicator.style.display = "none";
+        }
+    }
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function randomMove() {
+        var emptyTileId = findTitle(" ");
+        var adjacentTiles = [];
+
+        for (i = 0; i < numbers.length; i++) {
+            if (isAdjacent(numbers[i], emptyTileId)) {
+                adjacentTiles.push(numbers[i]);
+            }
+        }
+
+        var randomAdjacentTile = adjacentTiles[getRandomInt(0, adjacentTiles.length - 1)];
+        pushed(randomAdjacentTile);
+        moveCounter++;
+
+        if (isGameSolved()) {
+            isRandomizing = false; // Define a variável para indicar que o embaralhamento terminou
+            updateLoadingIndicator();
+            alert("Sequência correta encontrada em " + moveCounter + " movimentos!");
+            document.getElementById("moveCounter").innerText = "Movimentos: " + moveCounter;
+        } else {
+            console.log("Move " + moveCounter); // Adicione esta linha para depurar
+            setTimeout(randomMove, 100); // Realiza outro movimento aleatório após um pequeno atraso
+        }
+    }
+
+    updateLoadingIndicator(); // Atualiza o indicador de carregamento ao iniciar
+    randomMove();
+}
+
