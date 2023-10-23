@@ -1,63 +1,71 @@
-let numbers = ["b0","b1","b2","b3","b4","b5","b6","b7","b8"]
+// Variáveis globais
+const numbers = ["b0", "b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8"];
+let moveCount = 0; // Variável para rastrear o número de movimentos
+const timerInterval = 100; // Intervalo de tempo em milissegundos
 
-function findTitle(value){
-    for (i = 0; i < numbers.length; i++) { 
-        if(document.getElementById(numbers[i]).firstChild.data == value){
-            return(numbers[i])
+// Função para encontrar o ID com base no valor
+function findTitle(value) {
+  for (let i = 0; i < numbers.length; i++) {
+    if (document.getElementById(numbers[i]).firstChild.data == value) {
+      return numbers[i];
+    }
+  }
+}
+
+// Função para verificar se um movimento é adjacente
+function isAdjacent(id, emptyTileId) {
+  const emptyTileNumber = parseInt(emptyTileId[1]);
+  const tileNumber = parseInt(id[1]);
+  const rowDifference = Math.abs(emptyTileNumber - tileNumber);
+
+  return (
+    (rowDifference === 1 && Math.floor(emptyTileNumber / 3) === Math.floor(tileNumber / 3)) ||
+    (rowDifference === 3)
+  );
+}
+
+// Função para realizar um movimento
+function pushed(id) {
+    const btn = document.getElementById(id);
+    if (btn.firstChild.data !== " ") {
+        const emptyTileId = findTitle(" ");
+        if (isAdjacent(id, emptyTileId)) {
+            const emptyTile = document.getElementById(emptyTileId);
+            const tempData = emptyTile.firstChild.data;
+            emptyTile.firstChild.data = btn.firstChild.data;
+            btn.firstChild.data = tempData;
+            moveCount++; // Incrementa o contador de movimentos
+            updateMoveCounter(); // Atualiza o contador na interface
         }
     }
 }
 
-function isAdjacent(id, emptyTileId){
-    let neighbors = []
-    if([2,5,8].includes(parseInt(emptyTileId[1]))){
-        neighbors = [+3,-3,-1]
-    }else if([0,3,6].includes(parseInt(emptyTileId[1]))){
-        neighbors = [+3,+1,-3]
-    }else{
-        neighbors = [+3,+1,-3,-1]
-    }
-    for(i = 0; i < numbers.length; i++){
-        if(parseInt(emptyTileId[1])+parseInt(neighbors[i]) == parseInt(id[1])){
-            return(true);
-        }
-    }
-    return(false)
+// Função para atualizar o contador de movimentos na interface
+function updateMoveCounter() {
+    const moveCounterElement = document.getElementById("moveCounter");
+    moveCounterElement.textContent = `Movimentos: ${moveCount}`;
 }
 
-
-function pushed(id){
-    var btn = document.getElementById(id);
-    if (btn.firstChild.data!=" ") {
-        emptyTileId = findTitle(" ") 
-        if(isAdjacent(id, emptyTileId) == false) return;
-        document.getElementById(emptyTileId).firstChild.data = btn.firstChild.data;
-        btn.firstChild.data = " "
+// Função para verificar a solvabilidade da configuração inicial
+function isSolvable(randomList) {
+  let count = 0;
+  for (let i = 0; i < randomList.length - 1; i++) {
+    if (randomList[i] === 0) {
+      continue;
     }
+    for (let j = i + 1; j < randomList.length; j++) {
+      if (randomList[j] === 0) {
+        continue;
+      } else if (randomList[i] > randomList[j]) {
+        count++;
+      }
+    }
+  }
+
+  return count % 2 === 0;
 }
 
-function isSolvable(randomList){
-    var count = 0;
-    for(i = 0;i < randomList.length - 1;i++){
-        if(randomList[i] == 0) {
-            continue;
-        }
-        for(j = i+1 ; j < randomList.length;j++){
-            if(randomList[j] == 0){
-                continue;
-            }else if(randomList[i] > randomList[j]){
-                count++;
-            }
-        }
-    }
-    
-    if(count % 2 == 0){
-        return(true);
-    }else{
-        return(false);
-    }
-}
-
+// função para randomizar as peças do tabuleiro
 function randomNumber(){
     var randomList = []
     while(true){
@@ -81,75 +89,74 @@ function randomNumber(){
     }
 }
 
-function isGameSolved() {
-    for (let i = 0; i < numbers.length - 1; i++) {
-        const currentTile = document.getElementById(numbers[i]);
-        const nextTile = document.getElementById(numbers[i + 1]);
+// Função para gerar uma configuração inicial aleatória
+function generateRandomConfiguration() {
+  const randomList = [];
+  for (let i = 0; i < 9; i++) {
+    randomList.push(i);
+  }
 
-        // Verifique se o espaço em branco está antes da sequência de 1 a 8
-        if (currentTile.firstChild.data === " " || nextTile.firstChild.data === " ") {
-            return false;
-        }
+  // Embaralhar aleatoriamente a lista (Fisher-Yates Shuffle)
+  for (let i = randomList.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [randomList[i], randomList[j]] = [randomList[j], randomList[i]];
+  }
 
-        const currentNumber = parseInt(currentTile.firstChild.data);
-        const nextNumber = parseInt(nextTile.firstChild.data);
+  // Verificar a solvabilidade
+  if (!isSolvable(randomList)) {
+    // Se não for solucionável, trocar as duas últimas peças
+    [randomList[7], randomList[8]] = [randomList[8], randomList[7]];
+  }
 
-        // Verifique se a sequência está fora de ordem
-        if (currentNumber !== nextNumber - 1) {
-            return false;
-        }
-    }
-
-    return true; // Todas as condições foram atendidas, o jogo está resolvido
+  for (let i = 0; i < numbers.length; i++) {
+    const value = randomList[i] === 0 ? " " : randomList[i].toString();
+    document.getElementById(numbers[i]).firstChild.data = value;
+  }
 }
 
-//
-//
-//
-function randomizeGame() {
-    var moveCounter = 0;
-    var isRandomizing = true; // Variável para indicar que o jogo está sendo embaralhado
-
-    // Atualiza o indicador de carregamento
-    function updateLoadingIndicator() {
-        var loadingIndicator = document.getElementById("loadingIndicator");
-        if (isRandomizing) {
-            loadingIndicator.style.display = "block";
-        } else {
-            loadingIndicator.style.display = "none";
-        }
+// Função para verificar se o tabuleiro está na ordem correta
+function isBoardInOrder() {
+  for (let i = 0; i < numbers.length - 1; i++) {
+    const btn = document.getElementById(numbers[i]);
+    if (btn.firstChild.data !== (i + 1).toString()) {
+      return false;
     }
-
-    function getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    function randomMove() {
-        var emptyTileId = findTitle(" ");
-        var adjacentTiles = [];
-
-        for (i = 0; i < numbers.length; i++) {
-            if (isAdjacent(numbers[i], emptyTileId)) {
-                adjacentTiles.push(numbers[i]);
-            }
-        }
-
-        var randomAdjacentTile = adjacentTiles[getRandomInt(0, adjacentTiles.length - 1)];
-        pushed(randomAdjacentTile);
-        moveCounter++;
-
-        if (isGameSolved()) {
-            isRandomizing = false; // Define a variável para indicar que o embaralhamento terminou
-            updateLoadingIndicator();
-            alert("Sequência correta encontrada em " + moveCounter + " movimentos!");
-            document.getElementById("moveCounter").innerText = "Movimentos: " + moveCounter;
-        } else {
-            console.log("Move " + moveCounter); // Adicione esta linha para depurar
-            setTimeout(randomMove, 100); // Realiza outro movimento aleatório após um pequeno atraso
-        }
-    }
-
-    updateLoadingIndicator(); // Atualiza o indicador de carregamento ao iniciar
-    randomMove();
+  }
+  return true;
 }
 
+// Função para movimentar uma peça aleatoriamente
+function moveRandomPiece() {
+  const emptyTileId = findTitle(" ");
+  const movablePieces = [];
+
+  for (let i = 0; i < numbers.length; i++) {
+    if (isAdjacent(numbers[i], emptyTileId)) {
+      movablePieces.push(numbers[i]);
+    }
+  }
+
+  if (movablePieces.length > 0) {
+    // Escolher um movimento aleatório
+    const randomPiece = movablePieces[Math.floor(Math.random() * movablePieces.length)];
+    pushed(randomPiece);
+  }
+
+  // Verificar se o tabuleiro está na ordem correta após o movimento
+  if (isBoardInOrder()) {
+    clearInterval(timer);
+    alert("Parabéns! Você resolveu o quebra-cabeça.");
+  }
+}
+
+// Função para iniciar o jogo
+function startPuzzle() {
+    moveCount = 0; // Reinicia o contador de movimentos
+    updateMoveCounter(); // Atualiza o contador na interface
+    generateRandomConfiguration();
+    timer = setInterval(moveRandomPiece, timerInterval);
+}
+  
+
+// Chamar a função para iniciar o jogo
+startPuzzle();
