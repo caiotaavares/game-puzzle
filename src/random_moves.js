@@ -1,17 +1,17 @@
 // Função para movimentar uma peça aleatoriamente
 function moveRandomPiece() {
-  const emptyTileId = findTitle(" ");
-  const movablePieces = [];
+  const emptyTile = findTitle(" ");
+  const isMovable = [];
 
   for (let i = 0; i < numbers.length; i++) {
-    if (isAdjacent(numbers[i], emptyTileId)) {
-      movablePieces.push(numbers[i]);
+    if (isAdjacent(numbers[i], emptyTile)) {
+      isMovable.push(numbers[i]);
     }
   }
 
-  if (movablePieces.length > 0) {
-    // Escolher um movimento aleatório
-    const randomPiece = movablePieces[Math.floor(Math.random() * movablePieces.length)];
+  if (isMovable.length > 0) {
+    // Escolhe um movimento aleatório
+    const randomPiece = isMovable[Math.floor(Math.random() * isMovable.length)];
     pushed(randomPiece);
   }
 
@@ -22,14 +22,15 @@ function moveRandomPiece() {
   }
 }
   
-// Função para iniciar o jogo
+// Inicia as jogadas com timer
 function startPuzzle() {
-    moveCount = 0; // Reinicia o contador de movimentos
-    updateMoveCounter(); // Atualiza o contador na interface
-    generateRandomConfiguration();
-    timer = setInterval(moveRandomPiece, timerInterval);
+  // Reinicia o contador de movimentos
+  moveCount = 0; 
+  // Atualiza o contador na interface
+  updateMoveCounter();
+  generateRandomConfiguration();
+  timer = setInterval(moveRandomPiece, timerInterval);
 }
-    
-  
+
   // Chamar a função para iniciar o jogo
   startPuzzle();

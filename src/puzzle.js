@@ -1,7 +1,9 @@
 // Variáveis globais
 const numbers = ["b0", "b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8"];
-let moveCount = 0; // Variável para rastrear o número de movimentos
-const timerInterval = 100; // Intervalo de tempo em milissegundos
+// Variável para rastrear o número de movimentos
+let moveCount = 0;
+// Intervalo de tempo (milissegundos)
+const timerInterval = 100;
 
 // Função para encontrar o ID com base no valor
 function findTitle(value) {
@@ -18,13 +20,14 @@ function isAdjacent(id, emptyTileId) {
   const tileNumber = parseInt(id[1]);
   const rowDifference = Math.abs(emptyTileNumber - tileNumber);
 
+  // Retorna a diferença
   return (
     (rowDifference === 1 && Math.floor(emptyTileNumber / 3) === Math.floor(tileNumber / 3)) ||
     (rowDifference === 3)
   );
 }
 
-// Função para realizar um movimento
+// Função que realiza um movimento
 function pushed(id) {
     const btn = document.getElementById(id);
     if (btn.firstChild.data !== " ") {
@@ -34,19 +37,21 @@ function pushed(id) {
             const tempData = emptyTile.firstChild.data;
             emptyTile.firstChild.data = btn.firstChild.data;
             btn.firstChild.data = tempData;
-            moveCount++; // Incrementa o contador de movimentos
-            updateMoveCounter(); // Atualiza o contador na interface
+            // Contador de movimentos
+            moveCount++;
+            // Atualiza o contador na interface
+            updateMoveCounter();
         }
     }
 }
 
-// Função para atualizar o contador de movimentos na interface
+// Atualiza o contador de movimentos na interface
 function updateMoveCounter() {
     const moveCounterElement = document.getElementById("moveCounter");
     moveCounterElement.textContent = `Movimentos: ${moveCount}`;
 }
 
-// Função para verificar a solvabilidade da configuração inicial
+// Verifica se o esquema atual do tabulero é solicionável
 function isSolvable(randomList) {
   let count = 0;
   for (let i = 0; i < randomList.length - 1; i++) {
@@ -67,6 +72,7 @@ function isSolvable(randomList) {
 
 // função para randomizar as peças do tabuleiro
 function randomNumber(){
+    // Lista que armazena a configuração do tabuleiro
     var randomList = []
     while(true){
         randomList = []
@@ -89,14 +95,14 @@ function randomNumber(){
     }
 }
 
-// Função para gerar uma configuração inicial aleatória
+// Gera uma configuração inicial aleatória
 function generateRandomConfiguration() {
   const randomList = [];
   for (let i = 0; i < 9; i++) {
     randomList.push(i);
   }
 
-  // Embaralhar aleatoriamente a lista (Fisher-Yates Shuffle)
+  // Embaralhar aleatoriamente a lista através do algoritmo Fisher-Yates Shuffle
   for (let i = randomList.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [randomList[i], randomList[j]] = [randomList[j], randomList[i]];
@@ -104,17 +110,18 @@ function generateRandomConfiguration() {
 
   // Verificar a solvabilidade
   if (!isSolvable(randomList)) {
-    // Se não for solucionável, trocar as duas últimas peças
+    // Se caso não for solucionável, trocar as duas últimas peças
     [randomList[7], randomList[8]] = [randomList[8], randomList[7]];
   }
 
+  // Adicina a interface
   for (let i = 0; i < numbers.length; i++) {
     const value = randomList[i] === 0 ? " " : randomList[i].toString();
     document.getElementById(numbers[i]).firstChild.data = value;
   }
 }
 
-// Função para verificar se o tabuleiro está na ordem correta
+// Função para verificar se o tabuleiro está na ordem correta (Foi solucionado)
 function isBoardInOrder() {
   for (let i = 0; i < numbers.length - 1; i++) {
     const btn = document.getElementById(numbers[i]);

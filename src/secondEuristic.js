@@ -1,12 +1,27 @@
+/**
+ * A segunda eurística baseia-se no algoritmo guloso (Greedy), mas com uma otimização em relação
+ * a escolha dos filhos.
+ * De modo geral, algoritmos gulosos são usados em problemas de otimização 
+ * onde é interessante realizar um conjunto de melhores soluções locais, possuindo 
+ * como objetivo obter uma solução ótima global, tomando como base um determinado
+ * parâmetro. Os parâmetros que definem o que será a melhor solução durante a 
+ * iteração irá variar para cada problema.
+ * 
+ * No caso em questão o algoritmo de greedy vai analizar todos os filhos da iteração em questão
+ * E EM SEGUIDA ANALIZAR OS FILHOS DESSES FILHOS, e escolher o melhor dentre eles, no caso em questão
+ * a escolha será do melhor neto, o neto que deixa a peça mais próxima possível da sua posição correta.
+ */
+
 // Função para resolver o quebra-cabeça usando a Heurística 2 (Greedy)
 function solveWithGreedyHeuristic2() {
   const visited = new Set();
   const queue = [];
   const initialState = getCurrentState();
   const goalState = [" ", "1", "2", "3", "4", "5", "6", "7", "8"];
-  let moveCounter = 0; // Contador de movimentos específico para a heurística
+  // Contador de movimentos específico para a heurística
+  let moveCounter = 0; 
 
-  // Função para calcular o custo
+  // Cálculo do custo
   function heuristic(state) {
     let cost = 0;
     for (let i = 0; i < state.length; i++) {
@@ -23,7 +38,7 @@ function solveWithGreedyHeuristic2() {
     return cost;
   }
 
-  // Função para obter os estados vizinhos (filhos)
+  // Obtém os estados vizinhos (netos)
   function getChildren(state) {
     const children = [];
     const emptyTileIndex = state.indexOf(" ");
@@ -31,10 +46,10 @@ function solveWithGreedyHeuristic2() {
     const emptyTileY = Math.floor(emptyTileIndex / 3);
 
     const directions = [
-      { dx: -1, dy: 0 }, // Mover para a esquerda
-      { dx: 1, dy: 0 },  // Mover para a direita
-      { dx: 0, dy: -1 }, // Mover para cima
-      { dx: 0, dy: 1 }   // Mover para baixo
+      { dx: -1, dy: 0 }, // Move para a esquerda
+      { dx: 1, dy: 0 },  // Move para a direita
+      { dx: 0, dy: -1 }, // Move para cima
+      { dx: 0, dy: 1 }   // Move para baixo
     ];
 
     for (const direction of directions) {
@@ -110,14 +125,16 @@ function pushedGreedy2(id, updateCounter = true) {
       emptyTile.firstChild.data = btn.firstChild.data;
       btn.firstChild.data = tempData;
       if (updateCounter) {
-        moveCount++; // Incrementa o contador de movimentos
-        updateMoveCounterGreedy2(); // Atualiza o contador na interface
+        // Incrementa o contador de movimentos
+        moveCount++; 
+        // Atualiza o contador na interface
+        updateMoveCounterGreedy2();
       }
     }
   }
 }
 
-// Função para atualizar o contador de movimentos específico para a heurística
+// Função para atualizar o contador de movimentos na interface específico para a heurística2
 function updateMoveCounterGreedy2(moveCounter) {
   const moveCounterGreedyElement2 = document.getElementById("moveCounterGreedy2");
   moveCounterGreedyElement2.textContent = `Movimentos: ${moveCounter}`;
