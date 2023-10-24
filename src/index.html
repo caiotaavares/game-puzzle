@@ -26,6 +26,7 @@
     </style>
     <script type="text/javascript" src="puzzle.js"></script>
     <script type="text/javascript" src="random_moves.js"></script>
+    <script type="text/javascript" src="greedy.js"></script>
 </head>
 <body>
     <center>
@@ -48,10 +49,12 @@
         <br /><br />
         <button class="btn btn-default" style="width:200px; height:50px; font-size: 20px; color:#3377CC;" onclick="startPuzzle()">Solução Aleatória</button>
         <span id="moveCounter" style="font-size: 16px; margin-left: 10px;">Movimentos: 0</span>
-        <div id="loadingIndicator">
-            <p>Embaralhando...</p>
-        </div>
         <br /><br />
+        <button class="btn btn-default" style="width:200px; height:50px; font-size: 20px; color:#3377CC;" onclick="solveWithGreedyHeuristic()">Heurística 1: Greedy</button>
+        <span id="moveCounterGreedy" style="font-size: 16px; margin-left: 10px;">Movimentos: 0</span>
+        <br /><br />
+        <button class="btn btn-default" style="width:200px; height:50px; font-size: 20px; color:#3377CC;" onclick="solveWithHeuristic2()">Heurística 2: Greedy</button>
+        <span id="moveCounterGreedy" style="font-size: 16px; margin-left: 10px;">Movimentos: 0</span>
     </center>
 </body>
 </html>
