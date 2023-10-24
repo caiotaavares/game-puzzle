@@ -10,4 +10,7 @@ De maneira geral, a a cada 100 jogadas distintas a média de movimentos necessá
 
 ## Eurística 2
 A eurística 2 foi implementada sobre a mesma lógica da primeira, utilizando o algoritmo de busca gulosa (Greedy). Mas aqui a decisão de qual movimento deve ser realizado é realizada através da análise do melhor neto (Filho do filho a ser analizado). isso permite o algoritmo analisar um maior número de jogadas possíveis antes para tomar a melhor decisão, ainda utilizando a eurística de distância de Manhattan para encontrar a distância entre as peças.
+
 A eurística 2 teve um desempenho melhor do que a primeira (como esperado), que foi de para cada 100 jogadas, a média de movimentos para resolução foi de 241.
+
+![Screenshot from 2023-10-24 17-55-56](https://github.com/caiotaavares/game-puzzle/assets/69085383/0e4dd73d-025f-4ba6-ad4a-4c5b3112d2fa)
