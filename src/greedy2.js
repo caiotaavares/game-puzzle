@@ -1,15 +1,10 @@
-// Função para resolver o quebra-cabeça usando a Heurística 1 (Greedy)
-function solveWithGreedyHeuristic() {
+// Função para resolver o quebra-cabeça usando a Heurística 2 (Greedy)
+function solveWithGreedyHeuristic2() {
   const visited = new Set();
   const queue = [];
   const initialState = getCurrentState();
   const goalState = [" ", "1", "2", "3", "4", "5", "6", "7", "8"];
   let moveCounter = 0; // Contador de movimentos específico para a heurística
-
-  // Função para calcular a distância de Manhattan entre dois pontos
-  function manhattanDistance(x1, y1, x2, y2) {
-    return Math.abs(x1 - x2) + Math.abs(y1 - y2);
-  }
 
   // Função para calcular o custo
   function heuristic(state) {
@@ -22,15 +17,15 @@ function solveWithGreedyHeuristic() {
         const goalY = Math.floor(goalIndex / 3);
         const currentX = currentIndex % 3;
         const currentY = Math.floor(currentIndex / 3);
-        cost += manhattanDistance(goalX, goalY, currentX, currentY);
+        cost += Math.abs(goalX - currentX) + Math.abs(goalY - currentY);
       }
     }
     return cost;
   }
 
-  // Função para obter os estados vizinhos
-  function getNeighbors(state) {
-    const neighbors = [];
+  // Função para obter os estados vizinhos (filhos)
+  function getChildren(state) {
+    const children = [];
     const emptyTileIndex = state.indexOf(" ");
     const emptyTileX = emptyTileIndex % 3;
     const emptyTileY = Math.floor(emptyTileIndex / 3);
@@ -47,19 +42,21 @@ function solveWithGreedyHeuristic() {
       const newY = emptyTileY + direction.dy;
 
       if (newX >= 0 && newX < 3 && newY >= 0 && newY < 3) {
-        const neighborIndex = newY * 3 + newX;
-        const neighborState = [...state];
-        neighborState[emptyTileIndex] = state[neighborIndex];
-        neighborState[neighborIndex] = " ";
-        neighbors.push(neighborState);
+        const childIndex = newY * 3 + newX;
+        const childState = [...state];
+        childState[emptyTileIndex] = state[childIndex];
+        childState[childIndex] = " ";
+        children.push(childState);
       }
     }
 
-    return neighbors;
+    return children;
   }
 
+  // Inicializa a fila com o estado inicial
   queue.push({ state: initialState, cost: heuristic(initialState) });
 
+  // Executa a resolução
   while (queue.length > 0) {
     queue.sort((a, b) => a.cost - b.cost);
     const currentState = queue.shift().state;
@@ -67,21 +64,20 @@ function solveWithGreedyHeuristic() {
     if (currentState.join("") === goalState.join("")) {
       // Solução encontrada
       updateBoard(currentState);
-      updateMoveCounterGreedy(moveCounter);
+      updateMoveCounterGreedy2(moveCounter);
       return;
     }
 
     if (!visited.has(currentState.join(""))) {
       visited.add(currentState.join(""));
-      const neighbors = getNeighbors(currentState);
+      const children = getChildren(currentState);
 
-      for (const neighbor of neighbors) {
-        if (!visited.has(neighbor.join(""))) {
-          queue.push({ state: neighbor, cost: heuristic(neighbor) });
-          const emptyTileIndex = neighbor.indexOf(" ");
-          pushedGreedy(numbers[emptyTileIndex]); // Realiza o movimento
+      for (const child of children) {
+        if (!visited.has(child.join(""))) {
+          queue.push({ state: child, cost: heuristic(child) });
+          pushedGreedy2(numbers[child.indexOf(" ")]);
           moveCounter++;
-          updateMoveCounterGreedy(moveCounter);
+          updateMoveCounterGreedy2(moveCounter);
         }
       }
     }
@@ -104,7 +100,7 @@ function getCurrentState() {
   return state;
 }
 
-function pushedGreedy(id, updateCounter = true) {
+function pushedGreedy2(id, updateCounter = true) {
   const btn = document.getElementById(id);
   if (btn.firstChild.data !== " ") {
     const emptyTileId = findTitle(" ");
@@ -115,14 +111,14 @@ function pushedGreedy(id, updateCounter = true) {
       btn.firstChild.data = tempData;
       if (updateCounter) {
         moveCount++; // Incrementa o contador de movimentos
-        updateMoveCounterGreedy(); // Atualiza o contador na interface
+        updateMoveCounterGreedy2(); // Atualiza o contador na interface
       }
     }
   }
 }
 
 // Função para atualizar o contador de movimentos específico para a heurística
-function updateMoveCounterGreedy(moveCounter) {
-  const moveCounterGreedyElement = document.getElementById("moveCounterGreedy");
-  moveCounterGreedyElement.textContent = `Movimentos: ${moveCounter}`;
+function updateMoveCounterGreedy2(moveCounter) {
+  const moveCounterGreedyElement2 = document.getElementById("moveCounterGreedy2");
+  moveCounterGreedyElement2.textContent = `Movimentos: ${moveCounter}`;
 }
